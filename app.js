@@ -87,6 +87,7 @@
 
   function loadTrack(track, autoplay = true) {
     if (!track) return;
+    window.flushListening?.();
     state.currentId = track.id;
     audio.src = track.src;
     audio.playbackRate = Number(speedSelect.value);
@@ -141,7 +142,7 @@
   }));
   searchInput.addEventListener("input", () => { state.search = searchInput.value.trim(); applyFilters(); });
   testSelect.addEventListener("change", () => { state.test = testSelect.value; applyFilters(); });
-  speedSelect.addEventListener("change", () => { audio.playbackRate = Number(speedSelect.value); localStorage.setItem("toefl-speed", speedSelect.value); });
+  speedSelect.addEventListener("change", () => { window.flushListening?.(); audio.playbackRate = Number(speedSelect.value); localStorage.setItem("toefl-speed", speedSelect.value); });
   playlist.addEventListener("click", (event) => {
     const row = event.target.closest(".track");
     if (!row) return;
@@ -154,10 +155,10 @@
   $("#playButton").addEventListener("click", togglePlayback);
   $("#previousButton").addEventListener("click", () => moveTrack(-1));
   $("#nextButton").addEventListener("click", () => moveTrack(1));
-  $("#backButton").addEventListener("click", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
-  $("#forwardButton").addEventListener("click", () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); });
+  $("#backButton").addEventListener("click", () => { window.flushListening?.(); audio.currentTime = Math.max(0, audio.currentTime - 10); });
+  $("#forwardButton").addEventListener("click", () => { window.flushListening?.(); audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); });
   $("#nowFavorite").addEventListener("click", () => toggleFavorite(state.currentId));
-  progress.addEventListener("input", () => { if (audio.duration) audio.currentTime = (Number(progress.value) / 100) * audio.duration; });
+  progress.addEventListener("input", () => { if (audio.duration) { window.flushListening?.(); audio.currentTime = (Number(progress.value) / 100) * audio.duration; } });
   audio.addEventListener("play", () => { document.body.classList.add("playing"); $("#playButton").setAttribute("aria-label", "Pause"); renderPlaylist(); });
   audio.addEventListener("pause", () => { document.body.classList.remove("playing"); $("#playButton").setAttribute("aria-label", "Play"); renderPlaylist(); });
   audio.addEventListener("timeupdate", () => { $("#currentTime").textContent = formatTime(audio.currentTime); progress.value = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0; });
@@ -168,8 +169,8 @@
     if (event.key === "/" && !typing) { event.preventDefault(); searchInput.focus(); }
     if (typing) return;
     if (event.code === "Space") { event.preventDefault(); togglePlayback(); }
-    if (event.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - 10);
-    if (event.key === "ArrowRight") audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+    if (event.key === "ArrowLeft") { window.flushListening?.(); audio.currentTime = Math.max(0, audio.currentTime - 10); }
+    if (event.key === "ArrowRight") { window.flushListening?.(); audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); }
   });
 
   populateTests();

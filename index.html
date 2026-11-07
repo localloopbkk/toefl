@@ -72,6 +72,19 @@
         </div>
       </div>
 
+      <section class="listening-card" aria-label="Listening progress">
+        <div class="listening-heading"><p class="eyebrow">Your listening progress</p><button id="exportListening" class="export-button">Export CSV</button></div>
+        <div class="listening-stats">
+          <div><span>Today</span><strong id="listeningToday">0h 0m 0s</strong></div>
+          <div><span>This week</span><strong id="listeningWeek">0h 0m 0s</strong></div>
+          <div><span>Total hours</span><strong id="listeningTotal">0.00 h</strong></div>
+        </div>
+        <label class="goal-label" for="listeningGoal" id="listeningPercent">0.00% of 200 hours</label>
+        <progress id="listeningGoal" max="100" value="0" aria-labelledby="listeningPercent"></progress>
+        <p class="listening-note">Actual playback time; pauses, buffering and skips excluded.</p>
+        <p class="listening-note" id="listeningStatus" role="status"></p>
+      </section>
+
       <div class="now-card" aria-live="polite">
         <div class="visualizer" id="visualizer" aria-hidden="true"></div>
         <div class="now-copy">
@@ -108,6 +121,8 @@
 
   <audio id="audio" preload="metadata"></audio>
   <script src="tracks.js"></script>
+  <script src="listening.js"></script>
+  <script src="listening-ui.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
